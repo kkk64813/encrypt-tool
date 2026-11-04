@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>加密箱 · 一次性加密传递</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">⬢</span>
+      <span class="brand-name">加密箱</span>
+      <span class="brand-sub">一次性加密传递 · 阅后即焚</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 步骤 1：内容 -->
+    <section class="card">
+      <h2><span class="step">1</span> 输入要加密的内容</h2>
+
+      <div class="seg" id="segType">
+        <button type="button" class="seg-btn active" data-mode="text">文字</button>
+        <button type="button" class="seg-btn" data-mode="file">图片 / 档案</button>
+      </div>
+
+      <div id="panelText" class="panel">
+        <textarea id="txtInput" class="textarea" placeholder="在这里输入要加密发送的文字……（对方解密后直接看到）"></textarea>
+        <div class="hint">文字在浏览器内加密，任何中间环节都看不到明文。</div>
+      </div>
+
+      <div id="panelFile" class="panel hidden">
+        <div id="dropZone" class="dropzone">
+          <div class="dz-icon">⛃</div>
+          <div class="dz-title">拖拽文件到这里，或点击选择</div>
+          <div class="dz-sub">支持图片 / PDF / 文档 / 压缩包等，单个文件 ≤ 10MB</div>
+        </div>
+        <input type="file" id="fileInput" class="hidden" />
+        <div id="fileInfo" class="fileinfo hidden">
+          <span id="fileName" class="fn"></span>
+          <span id="fileSize" class="fs"></span>
+          <button type="button" id="btnClearFile" class="link-btn">移除</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤 2：密钥 -->
+    <section class="card">
+      <h2><span class="step">2</span> 设置解密密钥</h2>
+
+      <div class="key-actions">
+        <button type="button" id="btnGenRandom" class="btn btn-ghost">生成随机密钥</button>
+        <button type="button" id="btnGenChinese" class="btn btn-ghost">生成中文密钥</button>
+      </div>
+
+      <div class="key-row">
+        <input type="text" id="keyInput" class="key-input" placeholder="或直接输入你自己的密钥（支持中文）" autocomplete="off" spellcheck="false" />
+        <button type="button" id="btnCopyKey" class="btn btn-ghost">复制</button>
+      </div>
+
+      <div class="hint warn">密钥只会显示在这里，<b>请通过另一渠道单独发给对方</b>（如微信 / 邮件 / 电话），不要和下载链接一起发送。密钥即解密口令，丢失无法找回。</div>
+    </section>
+
+    <!-- 步骤 3：加密并上传 -->
+    <section class="card">
+      <h2><span class="step">3</span> 加密并生成下载链接</h2>
+
+      <button type="button" id="btnEncrypt" class="btn btn-primary btn-block">加密并生成链接</button>
+      <div id="statusBox" class="status hidden"></div>
+
+      <div id="resultBox" class="result hidden">
+        <div class="result-title">✅ 加密完成，请分开发送以下两项：</div>
+
+        <div class="result-item">
+          <div class="result-label">下载链接（给对方，点开输入密钥即可取文件）</div>
+          <div class="result-row">
+            <input type="text" id="outUrl" class="key-input" readonly />
+            <button type="button" id="btnCopyUrl" class="btn btn-ghost">复制</button>
+          </div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">解密密钥（用另一渠道单独发送）</div>
+          <div class="result-row">
+            <input type="text" id="outKey" class="key-input readonly-key" readonly />
+            <button type="button" id="btnCopyOutKey" class="btn btn-ghost">复制</button>
+          </div>
+        </div>
+
+        <div class="result-tip">
+          · 密文 7 天内有效，对方成功下载后保留 1 天，之后自动销毁<br />
+          · 下载口令输错 3 次，服务器立即销毁密文<br />
+          · 对方下载到的是"自解密文件"，本地双击输入密钥解密，失败 3 次文件自毁
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="foot-inner">
+      <b>安全模型</b>：加密全部在你浏览器本地完成（AES-256-GCM + PBKDF2 31 万次迭代），明文永不经过服务器；服务器只保存密文与口令指纹，无法解密。<br />
+      <b>尽力销毁说明</b>：自解密文件失败 3 次后，内存中的密文会被随机数据覆盖并永久标记销毁；服务器端密文会按规则真实删除。
+    </div>
+  </footer>
+
+  <script src="js/crypto-core.js"></script>
+  <script src="js/encrypt-page.js"></script>
+</body>
+</html>
